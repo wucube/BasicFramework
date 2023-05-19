@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,35 +15,84 @@ public class MonoController : MonoBehaviour
     /// <summary>
     /// 帧更新事件
     /// </summary>
-    private event UnityAction updateEvent;
+    private Action updateEvent;
+    private Action lateUpdateEvent;
+    private Action fixedUpdateEvent;
 
 	void Start () 
     {
         DontDestroyOnLoad(this.gameObject);
 	}
-	
-	void Update () 
+
+    #region 生命周期函数
+    /// <summary>
+    /// 添加Update监听
+    /// </summary>
+    /// <param name="action"></param>
+    public void AddUpdateListener(Action action)
     {
-        //帧更新事件不为空则每帧运行
-        if (updateEvent != null)
-            updateEvent();
+        updateEvent += action;
     }
 
     /// <summary>
-    /// 供外部使用的添加帧更新事件函数
+    /// 移除Update监听
     /// </summary>
-    /// <param name="func"></param>
-    public void AddUpdateListener(UnityAction func)
+    /// <param name="action"></param>
+    public  void RemoveUpdateListener(Action action)
     {
-        updateEvent += func;
+        updateEvent -= action;
     }
 
     /// <summary>
-    /// 提供给外部 用于移除帧更新事件函数
+    /// 添加LateUpdate监听
     /// </summary>
-    /// <param name="func"></param>
-    public void RemoveUpdateListener(UnityAction func)
+    /// <param name="action"></param>
+    public  void AddLateUpdateListener(Action action)
     {
-        updateEvent -= func;
+        lateUpdateEvent += action;
     }
+
+    /// <summary>
+    /// 移除LateUpdate监听
+    /// </summary>
+    /// <param name="action"></param>
+    public  void RemoveLateUpdateListener(Action action)
+    {
+        lateUpdateEvent -= action;
+    }
+
+    /// <summary>
+    /// 添加FixedUpdate监听
+    /// </summary>
+    /// <param name="action"></param>
+    public  void AddFixedUpdateListener(Action action)
+    {
+        fixedUpdateEvent += action;
+    }
+
+    /// <summary>
+    /// 移除FixedUpdate监听
+    /// </summary>
+    /// <param name="action"></param>
+    public void RemoveFixedUpdateListener(Action action)
+    {
+        fixedUpdateEvent -= action;
+    }
+
+    private void Update()
+    {
+        updateEvent?.Invoke();
+    }
+    private void LateUpdate()
+    {
+        lateUpdateEvent?.Invoke();
+    }
+    private void FixedUpdate()
+    {
+        fixedUpdateEvent?.Invoke();
+    }
+
+    #endregion
+
+
 }
