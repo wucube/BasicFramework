@@ -8,3 +8,5 @@
 - 输入控制(Input Manager)
 - 音效管理
 - UI管理
+
+视频教程地址：https://www.bilibili.com/video/BV1C441117wU/
