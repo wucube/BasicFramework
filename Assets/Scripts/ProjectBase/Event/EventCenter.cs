@@ -27,7 +27,7 @@ public class EventInfo<T> : IEventInfo
 }
 
 
-/// <summary>
+/// <summary> 
 /// 事件中心 单例模式对象
 /// 1.Dictionary
 /// 2.委托
@@ -40,20 +40,23 @@ public class EventCenter : BaseManager<EventCenter>
     //value —— 对应的是 监听这个事件 对应的委托函数们
     private Dictionary<string, IEventInfo> eventDic = new Dictionary<string, IEventInfo>();
 
+    // 事件缓存，应对事件未注册但已触发的情况
+    private Dictionary<string, IEventInfo> eventCacheDic = new Dictionary<string, IEventInfo>();
+
+
     /// <summary>
     /// 监听带有参数的事件
     /// </summary>
     /// <param name="name">事件的名字</param>
     /// <param name="action">准备用来处理事件 的委托函数</param>
-    public void AddEventListener<T>(string name, UnityAction<T> action)
+    public void AddListener<T>(string name, UnityAction<T> action)
     {
-        //有没有对应的事件监听
-        //有的情况
+        //已有对应的事件监听，就追加监听
         if( eventDic.ContainsKey(name) )
         {
             (eventDic[name] as EventInfo<T>).actions += action;
         }
-        //没有的情况
+        //没有对应事件监听，则添加新的事件监听
         else
         {
             eventDic.Add(name, new EventInfo<T>( action ));
@@ -65,15 +68,13 @@ public class EventCenter : BaseManager<EventCenter>
     /// </summary>
     /// <param name="name"></param>
     /// <param name="action"></param>
-    public void AddEventListener(string name, UnityAction action)
+    public void AddListener(string name, UnityAction action)
     {
-        //有没有对应的事件监听
-        //有的情况
         if (eventDic.ContainsKey(name))
         {
             (eventDic[name] as EventInfo).actions += action;
         }
-        //没有的情况
+
         else
         {
             eventDic.Add(name, new EventInfo(action));
@@ -86,7 +87,7 @@ public class EventCenter : BaseManager<EventCenter>
     /// </summary>
     /// <param name="name">事件的名字</param>
     /// <param name="action">对应之前添加的委托函数</param>
-    public void RemoveEventListener<T>(string name, UnityAction<T> action)
+    public void RemoveListener<T>(string name, UnityAction<T> action)
     {
         if (eventDic.ContainsKey(name))
             (eventDic[name] as EventInfo<T>).actions -= action;
@@ -97,7 +98,7 @@ public class EventCenter : BaseManager<EventCenter>
     /// </summary>
     /// <param name="name"></param>
     /// <param name="action"></param>
-    public void RemoveEventListener(string name, UnityAction action)
+    public void RemoveListener(string name, UnityAction action)
     {
         if (eventDic.ContainsKey(name))
             (eventDic[name] as EventInfo).actions -= action;
@@ -107,7 +108,7 @@ public class EventCenter : BaseManager<EventCenter>
     /// 事件触发
     /// </summary>
     /// <param name="name">哪一个名字的事件触发了</param>
-    public void EventTrigger<T>(string name, T info)
+    public void Trigger<T>(string name, T info, bool isDealyTrigger = false)
     {
         //有没有对应的事件监听
         //有的情况
@@ -124,7 +125,7 @@ public class EventCenter : BaseManager<EventCenter>
     /// 事件触发（不需要参数的）
     /// </summary>
     /// <param name="name"></param>
-    public void EventTrigger(string name)
+    public void Trigger(string name)
     {
         //有没有对应的事件监听
         //有的情况

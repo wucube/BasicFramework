@@ -48,7 +48,7 @@ public class ScenesMgr : BaseManager<ScenesMgr>
         while(!ao.isDone)
         {
             //事件中心 向外分发 进度情况  外面想用就用
-            EventCenter.Instance().EventTrigger("进度条更新", ao.progress);
+            EventCenter.Instance().Trigger("进度条更新", ao.progress);
             //这里面去更新进度条
             yield return ao.progress;
         }

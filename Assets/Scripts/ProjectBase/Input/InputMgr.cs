@@ -35,10 +35,10 @@ public class InputMgr : BaseManager<InputMgr>
     {
         //事件中心模块 分发按下抬起事件
         if (Input.GetKeyDown(key))
-            EventCenter.Instance().EventTrigger("某键按下", key);
+            EventCenter.Instance().Trigger("某键按下", key);
         //事件中心模块 分发按下抬起事件
         if (Input.GetKeyUp(key))
-            EventCenter.Instance().EventTrigger("某键抬起", key);
+            EventCenter.Instance().Trigger("某键抬起", key);
     }
 
     private void MyUpdate()

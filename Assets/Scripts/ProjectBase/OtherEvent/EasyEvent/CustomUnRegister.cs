@@ -1,3 +1,11 @@
+
+/*
+ * 注销事件类封装事件类中的 注销事件 函数（命令）
+ * 注销事件类实例再被封装到Mono类中，借由Mono的销毁生命周期函数来注销事件
+ * 这一封装过程本质是构造Mono管理器，将事件的生命末期（注销）与Mono的生命末期同步，也利用了命令模式
+ * 进一步抽象：借由命令模式的封装，可同步两个具有不同生命周期的对象
+ */
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;

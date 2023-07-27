@@ -1,10 +1,7 @@
 
 /*
  * EasyEvent 及其派生事件类，取自 QFramework 框架
- * 暂时还没研究明白（
  */
-
-
 
 
 using System;
