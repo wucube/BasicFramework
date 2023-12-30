@@ -7,7 +7,7 @@ using UnityEngine;
 /// 2.事件中心模块
 /// 3.公共Mono模块的使用
 /// </summary>
-public class InputMgr : BaseManager<InputMgr>
+public class InputMgr : Singleton<InputMgr>
 {
 
     private bool isStart = false;
@@ -16,7 +16,7 @@ public class InputMgr : BaseManager<InputMgr>
     /// </summary>
     public InputMgr()
     {
-        MonoMgr.Instance().AddUpdateListener(MyUpdate);
+        MonoMgr.Instance.AddUpdate(MyUpdate);
     }
 
     /// <summary>
@@ -35,10 +35,10 @@ public class InputMgr : BaseManager<InputMgr>
     {
         //事件中心模块 分发按下抬起事件
         if (Input.GetKeyDown(key))
-            EventCenter.Instance().Trigger("某键按下", key);
+            EventCenter.Instance.Trigger("某键按下", key);
         //事件中心模块 分发按下抬起事件
         if (Input.GetKeyUp(key))
-            EventCenter.Instance().Trigger("某键抬起", key);
+            EventCenter.Instance.Trigger("某键抬起", key);
     }
 
     private void MyUpdate()

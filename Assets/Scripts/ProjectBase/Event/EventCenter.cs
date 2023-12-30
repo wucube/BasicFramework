@@ -34,7 +34,7 @@ public class EventInfo<T> : IEventInfo
 /// 3.观察者设计模式
 /// 4.泛型
 /// </summary>
-public class EventCenter : BaseManager<EventCenter>
+public class EventCenter : Singleton<EventCenter>
 {
     //key —— 事件的名字（比如：怪物死亡，玩家死亡，通关 等等）
     //value —— 对应的是 监听这个事件 对应的委托函数们

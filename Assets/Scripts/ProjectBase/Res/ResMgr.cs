@@ -10,7 +10,7 @@ using UnityEngine.Events;
 /// 3.协程
 /// 4.泛型
 /// </summary>
-public class ResMgr : BaseManager<ResMgr>
+public class ResMgr : Singleton<ResMgr>
 {
     //同步加载资源
     public T Load<T>(string name) where T:Object
@@ -28,7 +28,7 @@ public class ResMgr : BaseManager<ResMgr>
     public void LoadAsync<T>(string name, UnityAction<T> callback) where T:Object
     {
         //开启异步加载的协程
-        MonoMgr.Instance().StartCoroutine(ReallyLoadAsync(name, callback));
+        MonoMgr.Instance.StartCoroutine(ReallyLoadAsync(name, callback));
     }
 
     //真正的协同程序函数  用于 开启异步加载对应的资源

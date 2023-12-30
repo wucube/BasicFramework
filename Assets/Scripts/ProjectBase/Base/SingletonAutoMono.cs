@@ -1,28 +1,33 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//C#中 泛型知识点
-//设计模式 单例模式的知识点
-//继承这种自动创建的 单例模式基类 不需要我们手动去拖 或者 api去加了
-//想用他 直接 GetInstance就行了
+/// <summary>
+/// 自动挂载继承Mono的单例
+/// </summary>
+/// <remarks> 
+/// <para>推荐使用</para>
+/// <para>无需手动挂载,无需动态添加,无需关心切场景带来的问题</para> 
+/// </remarks>
+/// <typeparam name="T"></typeparam>
 public class SingletonAutoMono<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T instance;
-
-    public static T GetInstance()
+    public static T Instance
     {
-        if( instance == null )
+        get
         {
-            GameObject obj = new GameObject();
-            //设置对象的名字为脚本名
-            obj.name = typeof(T).ToString();
-            //让这个单例模式对象 过场景 不移除
-            //因为 单例模式对象 往往 是存在整个程序生命周期中的
-            DontDestroyOnLoad(obj);
-            instance = obj.AddComponent<T>();
+            if (instance == null)
+            {
+                //在场景中创建空物体，用于自动挂载单例脚本
+                GameObject obj = new GameObject();
+                obj.name = typeof(T).ToString();
+                //动态挂载对应的单例模式脚本
+                instance = obj.AddComponent<T>();
+                //过场景不移除对象，保证在整个游戏生命周期中都存在
+                DontDestroyOnLoad(obj);
+            }
+            return instance;
         }
-        return instance;
     }
-
 }

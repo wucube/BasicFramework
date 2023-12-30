@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 /// 2.协程
 /// 3.委托
 /// </summary>
-public class ScenesMgr : BaseManager<ScenesMgr>
+public class ScenesMgr : Singleton<ScenesMgr>
 {
     /// <summary>
     /// 切换场景 同步
@@ -32,7 +32,7 @@ public class ScenesMgr : BaseManager<ScenesMgr>
     /// <param name="fun"></param>
     public void LoadSceneAsyn(string name, UnityAction fun)
     {
-        MonoMgr.Instance().StartCoroutine(ReallyLoadSceneAsyn(name, fun));
+        MonoMgr.Instance.StartCoroutine(ReallyLoadSceneAsyn(name, fun));
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ public class ScenesMgr : BaseManager<ScenesMgr>
         while(!ao.isDone)
         {
             //事件中心 向外分发 进度情况  外面想用就用
-            EventCenter.Instance().Trigger("进度条更新", ao.progress);
+            EventCenter.Instance.Trigger("进度条更新", ao.progress);
             //这里面去更新进度条
             yield return ao.progress;
         }

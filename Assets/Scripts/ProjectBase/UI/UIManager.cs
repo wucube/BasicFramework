@@ -20,7 +20,7 @@ public enum E_UI_Layer
 /// 1.管理所有显示的面板
 /// 2.提供给外部 显示和隐藏等等接口
 /// </summary>
-public class UIManager : BaseManager<UIManager>
+public class UIManager : Singleton<UIManager>
 {
     public Dictionary<string, BasePanel> panelDic = new Dictionary<string, BasePanel>();
 
@@ -35,7 +35,7 @@ public class UIManager : BaseManager<UIManager>
     public UIManager()
     {
         //创建Canvas 让其过场景的时候 不被移除
-        GameObject obj = ResMgr.Instance().Load<GameObject>("UI/Canvas");
+        GameObject obj = ResMgr.Instance.Load<GameObject>("UI/Canvas");
         canvas = obj.transform as RectTransform;
         GameObject.DontDestroyOnLoad(obj);
 
@@ -46,7 +46,7 @@ public class UIManager : BaseManager<UIManager>
         system = canvas.Find("System");
 
         //创建EventSystem 让其过场景的时候 不被移除
-        obj = ResMgr.Instance().Load<GameObject>("UI/EventSystem");
+        obj = ResMgr.Instance.Load<GameObject>("UI/EventSystem");
         GameObject.DontDestroyOnLoad(obj);
     }
 
@@ -90,7 +90,7 @@ public class UIManager : BaseManager<UIManager>
             return;
         }
 
-        ResMgr.Instance().LoadAsync<GameObject>("UI/" + panelName, (obj) =>
+        ResMgr.Instance.LoadAsync<GameObject>("UI/" + panelName, (obj) =>
         {
             //把他作为 Canvas的子对象
             //并且 要设置它的相对位置

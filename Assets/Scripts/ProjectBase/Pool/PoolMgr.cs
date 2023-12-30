@@ -4,123 +4,139 @@ using UnityEngine;
 using UnityEngine.Events;
 
 /// <summary>
-/// 抽屉数据  池子中的一列容器
+/// 池中的数据对象
 /// </summary>
 public class PoolData
 {
-    //抽屉中 对象挂载的父节点
-    public GameObject fatherObj;
-    //对象的容器
-    public List<GameObject> poolList;
+    //用来存储抽屉中的对象
+    private Stack<GameObject> dataStack = new Stack<GameObject>();
+    //抽屉根对象 用来进行布局管理的对象
+    private GameObject rootObj;
 
-    public PoolData(GameObject obj, GameObject poolObj)
+    //获取容器中是否有对象
+    public int Count => dataStack.Count;
+
+    /// <summary>
+    /// 初始化构造函数
+    /// </summary>
+    /// <param name="root">柜子（缓存池）父对象</param>
+    /// <param name="name">抽屉父对象的名字</param>
+    public PoolData(GameObject root, string name)
     {
-        //给我们的抽屉 创建一个父对象 并且把他作为我们pool(衣柜)对象的子物体
-        fatherObj = new GameObject(obj.name);
-        fatherObj.transform.parent = poolObj.transform;
-        poolList = new List<GameObject>() {};
-        PushObj(obj);
+        //开启功能时 才会动态创建 建立父子关系
+        if (PoolMgr.isOpenLayout)
+        {
+            //创建抽屉父对象
+            rootObj = new GameObject(name);
+            //和柜子父对象建立父子关系
+            rootObj.transform.SetParent(root.transform);
+        }
+
     }
 
     /// <summary>
-    /// 往抽屉里面 压都东西
+    /// 从抽屉中弹出数据对象
     /// </summary>
-    /// <param name="obj"></param>
-    public void PushObj(GameObject obj)
+    /// <returns>想要的对象数据</returns>
+    public GameObject Pop()
     {
-        //失活 让其隐藏
-        obj.SetActive(false);
-        //存起来
-        poolList.Add(obj);
-        //设置父对象
-        obj.transform.parent = fatherObj.transform;
-    }
-
-    /// <summary>
-    /// 从抽屉里面 取东西
-    /// </summary>
-    /// <returns></returns>
-    public GameObject GetObj()
-    {
-        GameObject obj = null;
-        //取出第一个
-        obj = poolList[0];
-        poolList.RemoveAt(0);
-        //激活 让其显示
+        //取出对象
+        GameObject obj = dataStack.Pop();
+        //激活对象
         obj.SetActive(true);
-        //断开了父子关系
-        obj.transform.parent = null;
+        //断开父子关系
+        if (PoolMgr.isOpenLayout)
+            obj.transform.SetParent(null);
 
         return obj;
+    }
+
+    /// <summary>
+    /// 将物体放入到抽屉对象中
+    /// </summary>
+    /// <param name="obj"></param>
+    public void Push(GameObject obj)
+    {
+        //失活放入抽屉的对象
+        obj.SetActive(false);
+        //放入对应抽屉的根物体中 建立父子关系
+        if (PoolMgr.isOpenLayout)
+            obj.transform.SetParent(rootObj.transform);
+        //通过栈记录对应的对象数据
+        dataStack.Push(obj);
     }
 }
 
 /// <summary>
-/// 缓存池模块
-/// 1.Dictionary List
-/// 2.GameObject 和 Resources 两个公共类中的 API 
+/// 对象池(缓存池
 /// </summary>
-public class PoolMgr : BaseManager<PoolMgr>
+public class PoolMgr : Singleton<PoolMgr>
 {
-    //缓存池容器 （衣柜）
-    public Dictionary<string, PoolData> poolDic = new Dictionary<string, PoolData>();
+    //缓存池容器
+    public Dictionary<string, Stack<GameObject>> poolDict = new Dictionary<string, Stack<GameObject>>();
 
+    //池子根对象
     private GameObject poolObj;
+
+    /// <summary>
+    /// 是否开启布局功能
+    /// </summary>
+    public static bool isOpenLayout = false;
+
+    private PoolMgr() { }
 
     /// <summary>
     /// 往外拿东西
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public void GetObj(string name, UnityAction<GameObject> callBack)
+    public GameObject GetObj(string name)
     {
-        //有抽屉 并且抽屉里有东西
-        if (poolDic.ContainsKey(name) && poolDic[name].poolList.Count > 0)
+        GameObject obj;
+        //有抽屉 并且 抽屉里 有对象 才去直接拿
+        if (poolDict.ContainsKey(name) && poolDict[name].Count > 0)
         {
-            callBack(poolDic[name].GetObj());
+            //弹出栈中的对象 直接返回给外部使用
+            obj = poolDict[name].Pop();
+            //激活对象 再返回
+            obj.SetActive(true);
         }
+        //否则，就应该去创造
         else
         {
-            //通过异步加载资源 创建对象给外部用
-            ResMgr.Instance().LoadAsync<GameObject>(name, (o) =>
-            {
-                o.name = name;
-                callBack(o);
-            });
-
-            //obj = GameObject.Instantiate(Resources.Load<GameObject>(name));
-            //把对象名字改的和池子名字一样
-            //obj.name = name;
+            //没有的时候 通过资源加载 去实例化出一个GameObject
+            obj = GameObject.Instantiate(Resources.Load<GameObject>(name));
+            //实例化出来的对象重命名过后,方便往里面放
+            obj.name = name;
         }
+
+        return obj;
     }
 
     /// <summary>
-    /// 换暂时不用的东西给我
+    /// 往缓存池中放入对象
     /// </summary>
-    public void PushObj(string name, GameObject obj)
+    /// <param name="name">抽屉（对象）的名字</param>
+    /// <param name="obj">希望放入的对象</param>
+    public void PushObj(GameObject obj)
     {
-        if (poolObj == null)
-            poolObj = new GameObject("Pool");
+        //目的是把对象隐藏起来
+        //并不是直接移除对象 而是将对象失活,用的时候再激活,还可以把对象放倒屏幕外看不见的地方
+        obj.SetActive(false);
 
-        //里面有抽屉
-        if (poolDic.ContainsKey(name))
-        {
-            poolDic[name].PushObj(obj);
-        }
-        //里面没有抽屉
-        else
-        {
-            poolDic.Add(name, new PoolData(obj, poolObj));
-        }
+        //没有抽屉 创建抽屉
+        if (!poolDict.ContainsKey(obj.name))
+            poolDict.Add(obj.name, new Stack<GameObject>());
+
+        //往抽屉当中放对象
+        poolDict[obj.name].Push(obj);
     }
 
     /// <summary>
-    /// 清空缓存池的方法 
-    /// 主要用在 场景切换时
+    /// 清空缓存池的方法,主要用在场景切换时
     /// </summary>
     public void Clear()
     {
-        poolDic.Clear();
-        poolObj = null;
+        poolDict.Clear();
     }
 }
