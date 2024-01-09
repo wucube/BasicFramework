@@ -12,11 +12,11 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{1fa3b9d5-229b-fbee-a41a-1a1d152fec3a}</ProjectGuid>
+    <ProjectGuid>{7253afb9-07b0-e684-8dd1-b223748db741}</ProjectGuid>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
+    <AssemblyName>Assembly-CSharp-Editor-firstpass</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>.</BaseDirectory>
@@ -41,26 +41,9 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Folder Include="Assets\Plugins\Sirenix\Odin Inspector\Assets" />
-     <None Include="Assets\Plugins\Sirenix\Assemblies\Sirenix.Serialization.Config.xml" />
-     <None Include="Assets\Plugins\Sirenix\Assemblies\Sirenix.OdinInspector.Editor.xml" />
-     <Folder Include="Assets\Plugins\Sirenix\Assemblies" />
-     <Folder Include="Assets\Plugins\Sirenix\Odin Inspector\Modules" />
-     <None Include="Assets\Plugins\Sirenix\Assemblies\Sirenix.OdinInspector.Attributes.xml" />
-     <Folder Include="Assets\Plugins\Sirenix\Assemblies\NoEmitAndNoEditor" />
-     <None Include="Assets\Plugins\Sirenix\Assemblies\Sirenix.Utilities.xml" />
-     <Folder Include="Assets\Plugins\Sirenix\Demos" />
-     <None Include="Assets\Plugins\Sirenix\Readme.txt" />
-     <Folder Include="Assets\Plugins\Sirenix\Assemblies\NoEditor" />
-     <None Include="Assets\Plugins\Sirenix\Assemblies\link.xml" />
-     <Folder Include="Assets\Plugins\Sirenix\Odin Inspector\Config" />
-     <None Include="Assets\Plugins\Sirenix\Assemblies\Sirenix.Utilities.Editor.xml" />
-     <Folder Include="Assets\Plugins\Sirenix" />
-     <Folder Include="Assets\Plugins\Excel" />
-     <Folder Include="Assets\Plugins" />
-     <Folder Include="Assets\Plugins\Sirenix\Odin Inspector" />
-     <None Include="Assets\Plugins\Sirenix\Assemblies\Sirenix.Serialization.xml" />
-     <Folder Include="Assets\Plugins\Json" />
+     <Folder Include="Assets\Plugins\Sirenix\Odin Inspector\Assets\Editor" />
+     <Folder Include="Assets\Plugins\Sirenix\Odin Inspector\Config\Editor" />
+     <None Include="Assets\Plugins\Sirenix\Odin Inspector\Assets\Editor\Bootstrap License.txt" />
      <Reference Include="UnityEngine">
      <HintPath>D:\Unity\2021.3.30f1c1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>

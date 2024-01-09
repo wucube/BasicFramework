@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
+//TODO:尝试使用ScriptalbeObject来写Unity中的单例
 /// <summary>
 /// 单例基类
 /// </summary>
