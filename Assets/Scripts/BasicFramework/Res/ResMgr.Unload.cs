@@ -17,14 +17,14 @@ public partial class ResMgr
         string resName = path + "_" + typeof(T).Name;
 
         //若存在对应资源
-        if(resDict.TryGetValue(resName,out IResourceLoad resource))
+        if(m_ResDict.TryGetValue(resName,out IResourceLoad resource))
         {
             ResInfo<T> resInfo = resource as ResInfo<T>;
 
             //资源已加载结束
             if(resInfo.asset != null)
             {
-                resDict.Remove(resName);
+                m_ResDict.Remove(resName);
                 //通过Resources API卸载资源
                 Resources.UnloadAsset(resInfo.asset as UnityEngine.Object);
             }
@@ -42,13 +42,13 @@ public partial class ResMgr
     public void UnloadAsset(string path,Type type)
     {
         string resName = path + "_" + type.Name;
-        if(resDict.TryGetValue (resName,out IResourceLoad resource))
+        if(m_ResDict.TryGetValue (resName,out IResourceLoad resource))
         {
             ResInfo<UnityEngine.Object> resInfo = resource as ResInfo<UnityEngine.Object>;
             //资源已经加载结束 
             if (resInfo.asset != null)
             {
-                resDict.Remove(resName);
+                m_ResDict.Remove(resName);
                 Resources.UnloadAsset(resInfo.asset);
             }
             else//资源正在异步加载中
