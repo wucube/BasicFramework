@@ -8,8 +8,6 @@ using UnityEngine;
 
 /*
  * 取自 https://github.com/gmhevinci/UniFramework/blob/main/UniFramework/UniEvent/Runtime/IEventMessage.cs 
- * 
- * 
  */
 
 public interface IEventMessage { }
