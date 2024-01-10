@@ -32,7 +32,7 @@ public partial class ResMgr : Singleton<ResMgr>
     /// <summary>
     /// 记录加载过的或加载中的资源
     /// </summary>
-    private Dictionary<string,IResourceLoad> resDict = new Dictionary<string, IResourceLoad>();
+    private readonly Dictionary<string, IResourceLoad> m_ResDict = new();
     private ResMgr() { }
 
     /// <summary>
@@ -48,7 +48,7 @@ public partial class ResMgr : Singleton<ResMgr>
         ResInfo<T> resInfo;
 
         //字典中存在指定资源时直接取出使用
-        if(resDict.TryGetValue(resName, out IResourceLoad resource))
+        if(m_ResDict.TryGetValue(resName, out IResourceLoad resource))
         {
             resInfo = resource as ResInfo<T>;
             //存在异步加载，资源还在加载中。异步加载最少下帧完成，所以当前帧的资源变量为空就表示异步加载还在进行中。
@@ -77,7 +77,7 @@ public partial class ResMgr : Singleton<ResMgr>
         {
             T res = Resources.Load<T>(path);
             resInfo = new ResInfo<T>() { asset = res };
-            resDict.Add(resName, resInfo);
+            m_ResDict.Add(resName, resInfo);
             return res;
         }
     }
@@ -95,7 +95,7 @@ public partial class ResMgr : Singleton<ResMgr>
         ResInfo<T> resInfo;
 
         //若字典中记录了加载的资源信息
-        if (resDict.TryGetValue(resName, out IResourceLoad resource))
+        if (m_ResDict.TryGetValue(resName, out IResourceLoad resource))
         {
             resInfo = resource as ResInfo<T>;
             //如果资源还没有加载完，就表示还在进行异步加载
@@ -108,7 +108,7 @@ public partial class ResMgr : Singleton<ResMgr>
         {
             resInfo = new ResInfo<T>();
             //记录资源（资源还没有加载成功）
-            resDict.Add(resName, resInfo);
+            m_ResDict.Add(resName, resInfo);
             //记录传入的委托，资源加载完成后使用
             resInfo.callback += callback;
             //开启协程进行异步加载，记录协同程序（用于之后可能的停止协程）
@@ -126,7 +126,7 @@ public partial class ResMgr : Singleton<ResMgr>
 
         string resName = path +"_"+typeof(T).Name;
         //资源加载结束后，将资源传到外部的委托函数中使用
-        if (resDict.TryGetValue(resName,out IResourceLoad resource))
+        if (m_ResDict.TryGetValue(resName,out IResourceLoad resource))
         {
             //取出资源信息 并且记录加载完成的资源
             ResInfo<T> resInfo = resource as ResInfo<T>;
@@ -157,7 +157,7 @@ public partial class ResMgr : Singleton<ResMgr>
         string resName = path + "_" + type.Name;
         ResInfo<UnityEngine.Object> resInfo;
 
-        if(resDict.TryGetValue(resName,out IResourceLoad resource))
+        if(m_ResDict.TryGetValue(resName,out IResourceLoad resource))
         {
             resInfo = resource as ResInfo<UnityEngine.Object>;
             if (resInfo.asset == null)
@@ -168,7 +168,7 @@ public partial class ResMgr : Singleton<ResMgr>
         else
         {
             resInfo = new ResInfo<UnityEngine.Object>();
-            resDict.Add(resName, resInfo);
+            m_ResDict.Add(resName, resInfo);
             resInfo.callback += callback;
             resInfo.coroutine = MonoMgr.Instance.StartCoroutine(ReallyLoadAsync(path, type));
         }
@@ -180,7 +180,7 @@ public partial class ResMgr : Singleton<ResMgr>
         yield return request;
 
         string resName = path + "_" + type.Name;
-        if(resDict.TryGetValue(resName, out IResourceLoad resource))
+        if(m_ResDict.TryGetValue(resName, out IResourceLoad resource))
         {
             ResInfo<UnityEngine.Object> resInfo = resource as ResInfo<UnityEngine.Object>;
             resInfo.asset = request.asset;
