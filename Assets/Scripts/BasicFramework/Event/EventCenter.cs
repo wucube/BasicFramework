@@ -23,6 +23,7 @@ public enum EventType
     Input_KeyUp,
 
     LoadingBar_Update,
+
     /// <summary>
     /// 测试用事件 —— 参数：无
     /// </summary>
